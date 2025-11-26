@@ -1,0 +1,23 @@
+
+# Google API Client for YouTube Data API v3
+google-api-python-client==2.108.0
+
+# Required dependencies for google-api-python-client
+google-auth==2.25.2
+google-auth-httplib2==0.2.0
+google-auth-oauthlib==1.2.0
+
+# HTTP library
+httplib2==0.22.0
+
+# URI templates
+uritemplate==4.1.1
+
+# Google API core
+googleapis-common-protos==1.62.0
+
+# Protocol buffers
+protobuf==4.25.1
+
+# Additional useful libraries (optional but recommended)
+requests==2.31.0
