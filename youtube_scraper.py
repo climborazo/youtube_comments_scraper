@@ -11,40 +11,17 @@ from pathlib import Path
 import re
 
 <<<<<<< HEAD
-YOUTUBE_API_KEY = "********************************"
-
-class YouTubeCommentsScraper:
-    def __init__(self, api_key: str):
-        """
-        Initialize Scraper With Your API Key
-        
-        Args:
-            api_key: Your YouTube Data API V3 Key
-        """
+YOUTUBE_API_KEY = "***************************"
 =======
-YOUTUBE_API_KEY = "*************************************"
+YOUTUBE_API_KEY = "****************************************"
+>>>>>>> dev
 
 class YouTubeCommentsScraper:
     def __init__(self, api_key: str):
->>>>>>> dev
         self.api_key = api_key
         self.youtube = build('youtube', 'v3', developerKey=api_key)
         
     def get_channel_id(self, channel_username: str = None, channel_url: str = None, channel_handle: str = None) -> Optional[str]:
-<<<<<<< HEAD
-        """
-        Get Channel ID From Username, URL Or Handle
-        
-        Args:
-            channel_username: Channel Username (e.g., 'GoogleDevelopers')
-            channel_url: Channel URL
-            channel_handle: Channel Handle With Or Without @ (e.g., '@GoogleDevelopers' Or 'GoogleDevelopers')
-            
-        Returns:
-            Channel ID Or None If Not Found
-        """
-=======
->>>>>>> dev
         try:
             if channel_handle:
                 channel_handle = channel_handle.lstrip('@')
@@ -103,18 +80,6 @@ class YouTubeCommentsScraper:
         return None
     
     def get_channel_info(self, channel_id: str) -> Dict:
-<<<<<<< HEAD
-        """
-        Get Channel Information
-        
-        Args:
-            channel_id: YouTube Channel ID
-            
-        Returns:
-            Dictionary With Channel Information
-        """
-=======
->>>>>>> dev
         try:
             request = self.youtube.channels().list(
                 part='snippet',
@@ -135,37 +100,14 @@ class YouTubeCommentsScraper:
         return {'title': 'Unknown_Channel', 'description': '', 'custom_url': ''}
     
     def sanitize_filename(self, filename: str) -> str:
-<<<<<<< HEAD
-        """
-        Sanitize Filename To Remove Invalid Characters
-        
-        Args:
-            filename: Original Filename
-            
-        Returns:
-            Sanitized Filename
-        """
-=======
->>>>>>> dev
         filename = re.sub(r'[<>:"/\\|?*]', '', filename)
         filename = filename.replace(' ', '_')
+        filename = filename.lower()
         if len(filename) > 100:
             filename = filename[:100]
         return filename
     
     def get_channel_videos(self, channel_id: str) -> List[Dict]:
-<<<<<<< HEAD
-        """
-        Get All Video IDs From A Channel
-        
-        Args:
-            channel_id: YouTube Channel ID
-            
-        Returns:
-            List Of Dictionaries With Video Information
-        """
-=======
->>>>>>> dev
         videos = []
         
         try:
@@ -214,18 +156,6 @@ class YouTubeCommentsScraper:
         return videos
     
     def get_video_comments(self, video_id: str) -> List[Dict]:
-<<<<<<< HEAD
-        """
-        Get All Comments From A Specific Video
-        
-        Args:
-            video_id: YouTube Video ID
-            
-        Returns:
-            List Of Dictionaries With Comments
-        """
-=======
->>>>>>> dev
         comments = []
         
         try:
@@ -290,18 +220,6 @@ class YouTubeCommentsScraper:
         return comments
     
     def scrape_channel_comments(self, channel_id: str) -> tuple:
-<<<<<<< HEAD
-        """
-        Download All Comments From All Videos Of A Channel
-        
-        Args:
-            channel_id: YouTube Channel ID
-            
-        Returns:
-            Tuple Of (List Of All Comments, Channel Name)
-        """
-=======
->>>>>>> dev
         all_comments = []
         
         channel_info = self.get_channel_info(channel_id)
