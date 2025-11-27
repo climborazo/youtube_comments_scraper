@@ -10,7 +10,7 @@ from typing import List, Dict, Optional
 from pathlib import Path
 import re
 
-YOUTUBE_API_KEY = "****************************************"
+YOUTUBE_API_KEY = "AIzaSyC2OlXB8AdJCABUNW3Eb0I_qTGyPLlSdSQ"
 
 class YouTubeCommentsScraper:
     def __init__(self, api_key: str):

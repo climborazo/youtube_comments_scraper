@@ -436,6 +436,36 @@ def generate_html_report(json_file: str, output_file: str = None):
         ::-webkit-scrollbar-thumb:hover {{
             background: #3a3a3a;
         }}
+        
+        /* Links */
+        .video-link, .author-link {{
+            color: #6a9ef5;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }}
+        
+        .video-link:hover, .author-link:hover {{
+            color: #8bb4ff;
+            text-decoration: underline;
+        }}
+        
+        .video-link {{
+            font-weight: 500;
+        }}
+        
+        .comment-link {{
+            color: #6a9ef5;
+            text-decoration: none;
+            margin-left: 15px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+        }}
+        
+        .comment-link:hover {{
+            color: #8bb4ff;
+            transform: scale(1.2);
+        }}
     </style>
 </head>
 <body>
@@ -480,10 +510,14 @@ def generate_html_report(json_file: str, output_file: str = None):
                     <input type="text" id="searchText" placeholder="Keywords...">
                 </div>
                 <div class="filter-group">
-                    <label for="searchAuthor">Search Author</label>
+                    <label for="searchAuthor">All Authors</label>
                     <select id="searchAuthor">
                         <option value="">All Authors</option>
                     </select>
+                </div>
+                <div class="filter-group">
+                    <label for="searchAuthorText">Search Author</label>
+                    <input type="text" id="searchAuthorText" placeholder="Type Author Name...">
                 </div>
                 <div class="filter-group">
                     <label for="searchVideo">Search Video</label>
@@ -573,6 +607,7 @@ def generate_html_report(json_file: str, output_file: str = None):
         function applyFilters() {{
             const searchText = document.getElementById('searchText').value.toLowerCase();
             const searchAuthor = document.getElementById('searchAuthor').value;
+            const searchAuthorText = document.getElementById('searchAuthorText').value.toLowerCase();
             const searchVideo = document.getElementById('searchVideo').value.toLowerCase();
             const dateFrom = document.getElementById('dateFrom').value;
             const dateTo = document.getElementById('dateTo').value;
@@ -587,8 +622,13 @@ def generate_html_report(json_file: str, output_file: str = None):
                     return false;
                 }}
                 
-                // Author filter
+                // Author dropdown filter
                 if (searchAuthor && comment.author !== searchAuthor) {{
+                    return false;
+                }}
+                
+                // Author text search filter
+                if (searchAuthorText && !comment.author.toLowerCase().includes(searchAuthorText)) {{
                     return false;
                 }}
                 
@@ -656,6 +696,7 @@ def generate_html_report(json_file: str, output_file: str = None):
         function resetFilters() {{
             document.getElementById('searchText').value = '';
             document.getElementById('searchAuthor').value = '';
+            document.getElementById('searchAuthorText').value = '';
             document.getElementById('searchVideo').value = '';
             document.getElementById('dateFrom').value = '';
             document.getElementById('dateTo').value = '';
@@ -682,12 +723,19 @@ def generate_html_report(json_file: str, output_file: str = None):
                 return;
             }}
             
-            const html = filteredComments.map(comment => `
+            const html = filteredComments.map(comment => {{
+                const videoUrl = `https://www.youtube.com/watch?v=${{comment.video_id}}`;
+                const commentUrl = `https://www.youtube.com/watch?v=${{comment.video_id}}&lc=${{comment.comment_id}}`;
+                const authorUrl = comment.author_channel_id 
+                    ? `https://www.youtube.com/channel/${{comment.author_channel_id}}`
+                    : `https://www.youtube.com/results?search_query=${{encodeURIComponent(comment.author)}}`;
+                
+                return `
                 <div class="comment-card ${{comment.is_reply ? 'reply' : ''}}">
                     <div class="comment-header">
                         <div>
                             <div class="comment-author">
-                                ${{comment.author}}
+                                <a href="${{authorUrl}}" target="_blank" class="author-link">${{comment.author}}</a>
                                 ${{comment.is_reply ? '<span class="badge badge-reply">Reply</span>' : '<span class="badge badge-top">Comment</span>'}}
                             </div>
                         </div>
@@ -700,14 +748,18 @@ def generate_html_report(json_file: str, output_file: str = None):
                                 <span class="icon">❤️</span>
                                 ${{comment.like_count}}
                             </span>
+                            <a href="${{commentUrl}}" target="_blank" class="comment-link" title="View comment on YouTube">
+                                <span class="icon">🔗</span>
+                            </a>
                         </div>
                     </div>
                     <div class="comment-text">${{comment.text}}</div>
                     <div class="comment-video">
-                        <strong>Video:</strong> ${{comment.video_title}}
+                        <strong>Video:</strong> <a href="${{videoUrl}}" target="_blank" class="video-link">${{comment.video_title}}</a>
                     </div>
                 </div>
-            `).join('');
+            `;
+            }}).join('');
             
             container.innerHTML = html;
         }}
@@ -742,6 +794,7 @@ def generate_html_report(json_file: str, output_file: str = None):
         // Auto-apply filters when typing
         document.getElementById('searchText').addEventListener('input', debounce(applyFilters, 500));
         document.getElementById('searchVideo').addEventListener('input', debounce(applyFilters, 500));
+        document.getElementById('searchAuthorText').addEventListener('input', debounce(applyFilters, 500));
         document.getElementById('searchAuthor').addEventListener('change', applyFilters);
         
         // Debounce function
